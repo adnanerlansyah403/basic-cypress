@@ -14,7 +14,17 @@
 // ***********************************************************
 
 // Import commands.js using ES2015 syntax:
+import addContext from 'mochawesome/addcontext';
 import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+Cypress.on('test:after:run', (test) => {
+    const customMessages = window.custom_messages[test.id];
+    addContext({test}, { 
+        title: 'Expected Results',
+        value: customMessages?.length > 0 ? customMessages?.map(msg => msg.trim()).join("\n- ") : customMessages
+    })
+    console.log(customMessages?.length > 0 ? customMessages?.map(msg => msg.trim()).join("\n- ") : customMessages)
+    delete window.custom_messages[test.id];
+});
